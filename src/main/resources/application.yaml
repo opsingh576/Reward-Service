@@ -1,0 +1,39 @@
+server:
+  port: 8080
+spring:
+  application:
+    name:reward-service
+  h2:
+    console:
+      enabled: true
+
+    datasource:
+      url: jdbc:h2:mem:reward
+      driver-class-name: org.h2.Driver
+      username: sa
+      password: password
+
+    jpa:
+      database-platform: org.hibernate.dialect.H2Dialect
+      hibernate:
+        ddl-auto: update
+
+# Optional for actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+#logging:
+#  level:
+#    root: INFO
+#    com.retailer.reward: DEBUG
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+
+
+
+
+
