@@ -13,7 +13,7 @@ based on their purchase transactions in 3 months.
 
 ## Features
 - Calculate monthly and total reward points per customer.
-- RESTful API endpoints to get rewards and customer details.
+- RESTful API endpoints to get getAllCustomerRewards/getCustomerRewardsById
 - Validation and exception handling with clean API error responses.
 - Sample data loader for quick startup.
 - Unit tests with JUnit and Mockito. 
@@ -26,37 +26,64 @@ based on their purchase transactions in 3 months.
     - repository
     - service
     - exception
-    - config
+    - configuration
   - src/test/java/com/rewardservice
     - controller
     - service
 
 ## Api Endpoints
-- GET /api/rewards - Get reward summaries for all customers.
-- GET /api/rewards/customer/{customerId} - Get rewards for specific customer.
-- GET /api/rewards/customer/details/{customerId} - Get customer details.
-- GET /api/rewards/customer/AllCustomerDetails  - Get all customer details.
+- GET /api/rewards/customers
 
+### Description
+This endpoint returns reward point details for customers:
 
-## API Endpoint-1 Example (rewards for all customers)
-```
-GET /api/rewards
-## Response Format
-```
+- If a `customer ID` is **provided**, it returns reward points for that specific customer.
+- If no `customer ID` is provided, it returns reward points for **all customers**.
+
+### 🔄 Response
+
+- **HTTP 200 OK**
+- Returns a JSON array of reward information (`RewardResponse` objects).
+    - If `id` is provided, the array contains one item.
+    - If `id` is not provided, it contains rewards for all customers.
+
+## Response Body Example (for all customers)
+```json
 [
   {
-     "customerId": 1,
-     "customerName": "Alice",
-     "monthlyPoints": {
-       "May": 90,
-       "April": 25
-     },
-     "totalPoints": 115
-   },
-  ...
+    "customerId": 101,
+    "customerName": "Alice",
+    "monthlyRewards": {
+      "March": 120,
+      "April": 90
+    },
+    "totalRewards": 210
+  },
+  {
+    "customerId": 102,
+    "customerName": "Bob",
+    "monthlyRewards": {
+      "March": 150,
+      "April": 75
+    },
+    "totalRewards": 225
+  }
+]
+
+## Response Body Example (for specific customer)
+```json
+[
+  {
+    "customerId": 101,
+    "customerName": "Alice",
+    "monthlyRewards": {
+      "March": 120,
+      "April": 90
+    },
+    "totalRewards": 210
+  }
 ]
 ```
-
 
 
 ## How to Run

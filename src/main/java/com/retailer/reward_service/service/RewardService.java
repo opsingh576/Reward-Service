@@ -1,15 +1,13 @@
 package com.retailer.reward_service.service;
 
-import com.retailer.reward_service.dtos.RewardResponse;
-import com.retailer.reward_service.entities.Customer;
-import com.retailer.reward_service.entities.Transaction;
+import com.retailer.reward_service.dto.RewardResponse;
+import com.retailer.reward_service.entity.Customer;
+import com.retailer.reward_service.entity.Transaction;
 import com.retailer.reward_service.exceptions.CustomerNotFoundException;
 import com.retailer.reward_service.exceptions.InvalidTransactionAmountException;
-import com.retailer.reward_service.repositories.CustomerRepository;
+import com.retailer.reward_service.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.*;
@@ -21,32 +19,24 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RewardService {
 
-
     private final CustomerRepository customerRepository;
 
     /**
      * Calculates reward summary for all customers.
      * @return list of reward responses
      */
-    public List<RewardResponse> calculateCustomerRewards() {
+    public List<RewardResponse> calculateAllCustomersRewards() {
         List<Customer> customers = customerRepository.findAll();
         List<RewardResponse> rewards = new ArrayList<>();
 
         for (Customer customer : customers) {
-            rewards.add(getCustomerRewardById(customer.getCustomerId()));
+            rewards.add(calculateCustomerRewards(customer));
         }
         return rewards;
     }
 
-    /**
-     * Calculates rewards for a single customer.
-     * @param customerId the ID of the customer
-     * @return reward response for the customer
-     */
-    public RewardResponse getCustomerRewardById(Integer customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
-
+    // Add this private method to calculate rewards directly from a Customer object
+    private RewardResponse calculateCustomerRewards(Customer customer) {
         Map<String, Integer> monthlyPoints = new HashMap<>();
         int totalPoints = 0;
 
@@ -63,6 +53,17 @@ public class RewardService {
         }
 
         return new RewardResponse(customer.getCustomerId(), customer.getName(), monthlyPoints, totalPoints);
+    }
+
+    /**
+     * Calculates rewards for a single customer.
+     * @param customerId the ID of the customer
+     * @return reward response for the customer
+     */
+    public RewardResponse calculateCustomerRewardsById(Integer customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
+        return calculateCustomerRewards(customer);
     }
 
     /**
@@ -85,6 +86,3 @@ public class RewardService {
         return points;
     }
 }
-
-
-

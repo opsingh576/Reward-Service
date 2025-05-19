@@ -1,4 +1,4 @@
-package com.retailer.reward_service.dtos;
+package com.retailer.reward_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

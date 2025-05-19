@@ -1,10 +1,7 @@
-package com.retailer.reward_service.entities;
+package com.retailer.reward_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,39 +12,32 @@ import java.time.LocalDate;
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class    Transaction {
+public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     /**
      * The customer associated with this transaction.
      */
     @ManyToOne
     @JoinColumn(name = "customer_id")
     @JsonBackReference
+    @NonNull
     private Customer customer;
 
     /**
-     * The amount spent in this transaction. Must be greater than 1.
+     * The amount spent in this transaction. Must be grater than 0.
      */
-    @NotNull(message = "Amount must not be null")
-   // @Min(value = 1, message = "Amount must be greater than 1")
+    @NonNull
     private Double amount;
 
     /**
      * The date when the transaction occurred.
      */
+    @NonNull
     private LocalDate transactionDate;
-
-
-    public Transaction(Customer customer, Double amount, LocalDate transactionDate) {
-        this.customer = customer;
-        this.amount = amount;
-        this.transactionDate = transactionDate;
-    }
-
 }
