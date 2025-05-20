@@ -36,7 +36,7 @@ public class DataLoader {
                     .build();
 
             Customer jack = Customer.builder()
-                    .name(" ")
+                    .name("Jack")
                     .build();
 
             Transaction t1 = new Transaction(alice, 120.0, LocalDate.now().minusDays(10));
