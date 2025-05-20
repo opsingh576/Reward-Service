@@ -4,6 +4,7 @@ import com.retailer.reward_service.dto.RewardResponse;
 import com.retailer.reward_service.service.RewardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,10 +1,10 @@
 package com.retailer.reward_service.entity;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
@@ -29,14 +29,11 @@ public class Customer {
     /**
      * Name of the customer.
      */
-    @NotBlank(message = "Customer name Should not blank")
-    @NotNull(message = "Customer name should not null")
     private String name;
 
     /**
      * List of transactions made by the customer.
      */
-     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 }

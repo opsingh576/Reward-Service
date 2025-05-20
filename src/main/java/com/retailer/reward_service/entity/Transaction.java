@@ -25,7 +25,6 @@ public class Transaction {
      */
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    @JsonBackReference
     @NonNull
     private Customer customer;
 
