@@ -16,19 +16,30 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class RewardServiceApplicationTest {
+/**
+ * Unit tests for {@link RewardServiceImpl} using Mockito.
+ * Covers reward calculation logic for both individual and multiple customers.
+ */
+class RewardServiceImplApplicationTest {
 
     @Mock
     private CustomerRepository customerRepository;
 
     @InjectMocks
-    private RewardService rewardService;
+    private RewardServiceImpl rewardServiceImpl;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Creates a {@link Customer} object with the given ID, name, and transactions.
+     * @param id           the customer ID
+     * @param name         the customer's name
+     * @param transactions the list of transactions
+     * @return a populated {@link Customer} instance
+     */
     private Customer createCustomerWithTransactions(Integer id, String name, List<Transaction> transactions) {
         Customer customer = new Customer();
         customer.setCustomerId(id);
@@ -37,6 +48,12 @@ class RewardServiceApplicationTest {
         return customer;
     }
 
+    /**
+     * Creates a {@link Transaction} object with the given amount and date.
+     * @param amount the transaction amount
+     * @param date   the transaction date
+     * @return a {@link Transaction} instance
+     */
     private Transaction createTransaction(Double amount, LocalDate date) {
         Transaction tx = new Transaction();
         tx.setAmount(amount);
@@ -44,6 +61,10 @@ class RewardServiceApplicationTest {
         return tx;
     }
 
+    /**
+     * Tests successful calculation of reward points for a single customer
+     * with valid transactions within the last 3 months.
+     */
     @Test
     void testCalculateCustomerRewardsById_Success() {
         Integer customerId = 1;
@@ -58,7 +79,7 @@ class RewardServiceApplicationTest {
 
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
 
-        RewardResponse response = rewardService.calculateCustomerRewardsById(customerId);
+        RewardResponse response = rewardServiceImpl.calculateCustomerRewardsById(customerId);
 
         assertEquals(customerId, response.getCustomerId());
         assertEquals("John", response.getCustomerName());
@@ -66,12 +87,19 @@ class RewardServiceApplicationTest {
         assertFalse(response.getMonthlyPoints().isEmpty());
     }
 
+    /**
+     * Tests that a {@link CustomerNotFoundException} is thrown when a customer ID does not exist.
+     */
     @Test
     void testCalculateCustomerRewardsById_CustomerNotFound() {
         when(customerRepository.findById(99)).thenReturn(Optional.empty());
-        assertThrows(CustomerNotFoundException.class, () -> rewardService.calculateCustomerRewardsById(99));
+        assertThrows(CustomerNotFoundException.class, () -> rewardServiceImpl.calculateCustomerRewardsById(99));
     }
 
+    /**
+     * Tests that an {@link InvalidTransactionAmountException} is thrown
+     * when a customer has zero or negative transaction amounts.
+     */
     @Test
     void testCalculateCustomerRewardsById_ZeroOrNegativeAmount() {
         Integer customerId = 2;
@@ -84,9 +112,13 @@ class RewardServiceApplicationTest {
 
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
 
-        assertThrows(InvalidTransactionAmountException.class, () -> rewardService.calculateCustomerRewardsById(customerId));
+        assertThrows(InvalidTransactionAmountException.class, () -> rewardServiceImpl.calculateCustomerRewardsById(customerId));
     }
 
+    /**
+     * Tests reward calculation for all customers.
+     * Validates that the result contains entries for each customer.
+     */
     @Test
     void testCalculateAllCustomersRewards() {
         LocalDate now = LocalDate.now();
@@ -96,7 +128,7 @@ class RewardServiceApplicationTest {
 
         when(customerRepository.findAll()).thenReturn(customers);
 
-        List<RewardResponse> responses = rewardService.calculateAllCustomersRewards();
+        List<RewardResponse> responses = rewardServiceImpl.calculateAllCustomersRewards();
 
         assertEquals(2, responses.size());
         RewardResponse respA = responses.stream().filter(r -> "A".equals(r.getCustomerName())).findFirst().orElse(null);
@@ -105,6 +137,9 @@ class RewardServiceApplicationTest {
         assertNotNull(respB);
     }
 
+    /**
+     * Tests that transactions older than 3 months are not included in reward point calculation.
+     */
     @Test
     void testCalculateCustomerRewardsById_TransactionOutsideThreeMonths() {
         Integer customerId = 3;
@@ -117,9 +152,27 @@ class RewardServiceApplicationTest {
 
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
 
-        RewardResponse response = rewardService.calculateCustomerRewardsById(customerId);
+        RewardResponse response = rewardServiceImpl.calculateCustomerRewardsById(customerId);
 
         assertEquals(0, response.getTotalPoints());
         assertTrue(response.getMonthlyPoints().isEmpty());
     }
+
+    /**
+     * Tests that a customer with no transactions gets zero reward points and empty monthly breakdown.
+     */
+    @Test
+    void testCalculateCustomerRewardsById_NoTransactions() {
+        Integer customerId = 10;
+        Customer customer = createCustomerWithTransactions(customerId, "NoTx", Collections.emptyList());
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+
+        RewardResponse response = rewardServiceImpl.calculateCustomerRewardsById(customerId);
+
+        assertEquals(customerId, response.getCustomerId());
+        assertEquals("NoTx", response.getCustomerName());
+        assertEquals(0, response.getTotalPoints());
+        assertTrue(response.getMonthlyPoints().isEmpty());
+    }
+
 }

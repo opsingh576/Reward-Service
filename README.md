@@ -20,16 +20,54 @@ based on their purchase transactions in 3 months.
 - added swagger for api documentation
 
 - Project Structure:
-  - src/main/java/com/rewardservice
-    - controller
-    - model
-    - repository
-    - service
-    - exception
-    - configuration
-  - src/test/java/com/rewardservice
-    - controller
-    - service
+
+```
+reward-service/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── retailer/
+│   │   │           └── reward_service/
+│   │   │               ├── controller/
+│   │   │               │   └── RewardController.java
+│   │   │               ├── service/
+│   │   │               │   ├── RewardService.java
+│   │   │               │   └── RewardServiceImpl.java
+│   │   │               ├── entities/
+│   │   │               │   ├── Customer.java
+│   │   │               │   └── Transaction.java
+│   │   │               ├── dtos/
+│   │   │               │   └── RewardResponse.java
+│   │   │               ├── exceptions/
+│   │   │               │   ├── CustomerNotFoundException.java
+│   │   │               │   ├── ErrorDetails.java
+│   │   │               │   ├── GlobalExceptionHandler.java
+│   │   │               │   └── InvalidTransactionAmountException.java
+│   │   │               ├── repositories/
+│   │   │               │   ├── TransactionRepository.java
+│   │   │               │   └── CustomerRepository.java
+│   │   │               ├── config/
+│   │   │               │   └── DataLoader.java
+│   │   │               └── RewardServiceApplication.java
+│   │   └── resources/
+│   │       ├── application.properties
+│   │      
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── retailer/
+│                   └── reward_service/
+│                       ├── service/
+│                       │   └── RewardServiceImplApplicationTest.java
+│                       └── controller/
+│                           └── RewardControllerIntegrationTest.java (optional)
+├── .gitignore
+├── README.md
+├── pom.xml / build.maven
+
+```
+
 
 ## Api Endpoints
 - GET /api/rewards/customers
@@ -72,6 +110,7 @@ This endpoint returns reward point details for customers:
 
 ## Response Body Example (for specific customer)
 ```json
+
 [
   {
     "customerId": 101,
