@@ -61,7 +61,7 @@ reward-service/
 │                       ├── service/
 │                       │   └── RewardServiceImplApplicationTest.java
 │                       └── controller/
-│                           └── RewardControllerIntegrationTest.java (optional)
+│                           └── RewardControllerIntegrationTest.java
 ├── .gitignore
 ├── README.md
 ├── pom.xml / build.maven
